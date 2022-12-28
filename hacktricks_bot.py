@@ -156,8 +156,8 @@ def main():
         for url in urls:
             message += f"- {url}\n"
         
-        send_telegram_message(message)
-        #send_discord_message(message)
+        #send_telegram_message(message)
+        send_discord_message(message)
     
     else:
         print("No new content added")
