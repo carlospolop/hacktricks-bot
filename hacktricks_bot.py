@@ -73,6 +73,7 @@ def get_modified_urls(repo_url):
     
     files = get_changed_lines(repo_name)
     files = [f.replace("/README.md", "") for f in files]
+    files = [f[:-3] for f in files if f.endswith(".md")]
 
     urls = [url + f for f in files]
 
@@ -125,6 +126,8 @@ def send_telegram_message(message: str):
         resp = r.json()
         if not resp['ok']:
             print("ERROR SENDING TO TELEGRAM: "+ message.split("\n")[0] + resp["description"])
+        else:
+            print("Sent to telegram")
 
 
 def send_discord_message(message: str):
@@ -140,6 +143,7 @@ def send_discord_message(message: str):
     webhook = Webhook.from_url(discord_webhok_url, adapter=RequestsWebhookAdapter())
     
     webhook.send(message)
+    print("Sent to discord")
 
 
 ##########################
@@ -156,7 +160,7 @@ def main():
         for url in urls:
             message += f"- {url}\n"
         
-        #send_telegram_message(message)
+        send_telegram_message(message)
         send_discord_message(message)
     
     else:
