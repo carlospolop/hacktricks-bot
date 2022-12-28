@@ -14,8 +14,11 @@ def get_changed_lines(repo_name):
     """Get the list of files changed in the last day."""
 
     # Set the personal access token for the GitHub API
-    access_token = os.getenv('GITHUB_ACCESS_TOKEN')
-
+    access_token = os.getenv('GH_ACCESS_TOKEN')
+    if not access_token:
+        print("GITHUB_ACCESS_TOKEN wasn't configured in the secrets!")
+        return []
+    
     # Create a GitHub API client using the personal access token
     client = github.Github(access_token)
 
