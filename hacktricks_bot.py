@@ -3,7 +3,7 @@ import time
 import github
 import datetime
 import requests
-#from discord import Webhook, RequestsWebhookAdapter
+from discord import Webhook, RequestsWebhookAdapter
 
 
 ##########################
@@ -127,7 +127,7 @@ def send_telegram_message(message: str):
             print("ERROR SENDING TO TELEGRAM: "+ message.split("\n")[0] + resp["description"])
 
 
-"""def send_discord_message(message: str):
+def send_discord_message(message: str):
     ''' Send a message to the discord channel webhook '''
 
     discord_webhok_url = os.getenv('DISCORD_WEBHOOK_URL')
@@ -139,7 +139,7 @@ def send_telegram_message(message: str):
     message = message.replace("(", "\(").replace(")", "\)").replace("_", "").replace("[","\[").replace("]","\]").replace("{","\{").replace("}","\}").replace("=","\=")
     webhook = Webhook.from_url(discord_webhok_url, adapter=RequestsWebhookAdapter())
     
-    webhook.send(message)"""
+    webhook.send(message)
 
 
 ##########################
@@ -154,8 +154,7 @@ def main():
         
         message = "📓 New content has been added to the following pages 📓\n\n"
         for url in urls:
-            url_name = url.split("/")[-1]
-            message += f"- [{url_name}]({url})\n"
+            message += f"- {url}\n"
         
         send_telegram_message(message)
         #send_discord_message(message)
