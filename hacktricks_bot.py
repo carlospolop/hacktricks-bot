@@ -151,7 +151,7 @@ def send_discord_message(message: str):
 ##########################
 
 def main():
-    urls = get_changed_urls()
+    urls = list(set(get_changed_urls()))
     
     if urls:
         print(urls)
