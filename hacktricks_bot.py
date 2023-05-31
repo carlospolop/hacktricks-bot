@@ -3,7 +3,10 @@ import time
 import github
 import datetime
 import requests
+import tweepy
+
 from discord import Webhook, RequestsWebhookAdapter
+
 
 
 ##########################
@@ -32,7 +35,7 @@ def get_changed_lines(repo_name):
     lines_changed_threshold = 15
 
     # Set the time range for commits to check (one day in seconds)
-    time_range = 24 * 60 * 60
+    time_range = 2 * 7 * 24 * 60 * 60
 
     # Set the current time
     current_time = int(time.time())
@@ -43,26 +46,18 @@ def get_changed_lines(repo_name):
     # Get the list of commits within the specified time range
     commits = repo.get_commits(since=start_time)
 
+    file_changes = {}
     # Loop through the list of commits
     for commit in commits:
-        # Get the commit SHA
-        commit_sha = commit.sha
+        for file in commit.files:
+            # Store the number of lines each file changed
+            file_changes[file.filename] = file_changes.get(file.filename, 0) + file.changes
 
-        # Get the commit object
-        commit_obj = repo.get_commit(commit_sha)
+    # Sort the files by the number of lines changed
+    sorted_files = sorted(file_changes.items(), key=lambda x: x[1], reverse=True)
 
-        # Get the list of modified files for the commit
-        modified_files = commit_obj.files
-
-        # Loop through the list of modified files
-        for file in modified_files:
-            # Get the file name and number of lines changed
-            file_name = file.filename
-            lines_changed = file.changes
-
-            # Check if the number of lines changed is greater than the threshold
-            if lines_changed > lines_changed_threshold:
-                files.append(file_name)
+    # Get the fine names of the files changed
+    files = [file_name for file_name, _ in sorted_files]
     
     return files
 
@@ -146,6 +141,43 @@ def send_discord_message(message: str):
     print("Sent to discord")
 
 
+def send_twitter_message(message: str):
+    """ Send a message to the twitter account """
+
+    twitter_api_key = os.getenv('TWITTER_API_KEY')
+    twitter_api_secret_key = os.getenv('TWITTER_API_SECRET_KEY')
+    twitter_access_token = os.getenv('TWITTER_ACCESS_TOKEN')
+    twitter_access_token_secret = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
+
+    if not twitter_api_key:
+        print("TWITTER_API_KEY wasn't configured in the secrets!")
+        return
+    
+    if not twitter_api_secret_key:
+        print("TWITTER_API_SECRET_KEY wasn't configured in the secrets!")
+        return
+
+    if not twitter_access_token:
+        print("TWITTER_ACCESS_TOKEN wasn't configured in the secrets!")
+        return
+    
+    if not twitter_access_token_secret:
+        print("TWITTER_ACCESS_TOKEN_SECRET wasn't configured in the secrets!")
+        return
+
+    client = tweepy.Client(
+        consumer_key=twitter_api_key,
+        consumer_secret=twitter_api_secret_key,
+        access_token=twitter_access_token,
+        access_token_secret=twitter_access_token_secret
+    )
+
+    client.create_tweet(text=message)
+
+    print("Sent to twitter")
+
+
+
 ##########################
 ######### MAIN ###########
 ##########################
@@ -156,12 +188,22 @@ def main():
     if urls:
         print(urls)
         
-        message = "📓 New content has been added to the following pages 📓\n\n"
-        for url in urls:
-            message += f"- {url}\n"
+        message1 = "📓 In the past 2 weeks new content was added! 📓\n\n"
         
-        send_telegram_message(message)
-        send_discord_message(message)
+        for url in urls:
+            message1 += f"- {url}\n"
+        
+        message2 = "📓 Most modified pages in the past 2 weeks 📓\n\n"
+
+        for url in urls[:5]: # Only the first 5
+            if len(message2) + len(url) + 3 < 280 - 20: # Check the message can go in a tweet
+                message2 += f"- {url}\n"
+        
+        message2 += "#hacktricks #hacking"
+        
+        send_telegram_message(message1)
+        send_discord_message(message1)
+        send_twitter_message(message2)
     
     else:
         print("No new content added")
