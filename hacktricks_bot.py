@@ -34,8 +34,8 @@ def get_changed_lines(repo_name):
     # Set the number of lines changed threshold
     lines_changed_threshold = 15
 
-    # Set the time range for commits to check (one day in seconds)
-    time_range = 2 * 7 * 24 * 60 * 60
+    # Set the time range for commits to check (15 days in seconds)
+    time_range = 15 * 24 * 60 * 60
 
     # Set the current time
     current_time = int(time.time())
