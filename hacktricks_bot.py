@@ -51,7 +51,8 @@ def get_changed_lines(repo_name):
     for commit in commits:
         for file in commit.files:
             # Store the number of lines each file changed
-            file_changes[file.filename] = file_changes.get(file.filename, 0) + file.changes
+            if file.changes > lines_changed_threshold:
+                file_changes[file.filename] = file_changes.get(file.filename, 0) + file.changes
 
     # Sort the files by the number of lines changed
     sorted_files = sorted(file_changes.items(), key=lambda x: x[1], reverse=True)
