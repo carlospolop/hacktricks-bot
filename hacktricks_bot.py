@@ -192,7 +192,8 @@ def main():
         
         s = pyshorteners.Shortener()
 
-        message = "📓 Top 5 modified HackTricks pages in 2 weeks! 📓\n\n"
+        # To use a "!", telegram needs it escaped...
+        message = "📓 Top 5 modified HackTricks pages in 2 weeks 📓\n\n"
         
         for url in urls[:5]:
             s_url  = s.tinyurl.short(url)
