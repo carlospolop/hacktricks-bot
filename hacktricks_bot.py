@@ -4,6 +4,8 @@ import github
 import datetime
 import requests
 import tweepy
+import pyshorteners
+
 
 from discord import Webhook, RequestsWebhookAdapter
 
@@ -176,8 +178,7 @@ def send_twitter_message(message: str):
     client.create_tweet(text=message)
 
     print("Sent to twitter")
-
-
+        
 
 ##########################
 ######### MAIN ###########
@@ -189,22 +190,21 @@ def main():
     if urls:
         print(urls)
         
-        message1 = "📓 In the past 2 weeks new content was added! 📓\n\n"
-        
-        for url in urls:
-            message1 += f"- {url}\n"
-        
-        message2 = "📓 Most modified pages in the past 2 weeks 📓\n\n"
+        s = pyshorteners.Shortener()
 
-        for url in urls[:5]: # Only the first 5
-            if len(message2) + len(url) + 3 < 280 - 20: # Check the message can go in a tweet
-                message2 += f"- {url}\n"
+        message = "📓 Top 5 modified HackTricks pages in 2 weeks! 📓\n\n"
         
-        message2 += "#hacktricks #hacking"
+        for url in urls[:5]:
+            s_url  = s.tinyurl.short(url)
+            message += f"- {s_url}\n"
+
+        message += "\n#hacktricks #hacking"
+
+        print(f"Message: {message}")
         
-        send_telegram_message(message1)
-        send_discord_message(message1)
-        send_twitter_message(message2)
+        send_telegram_message(message)
+        send_discord_message(message)
+        send_twitter_message(message)
     
     else:
         print("No new content added")
