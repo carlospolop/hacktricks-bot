@@ -203,7 +203,7 @@ def main():
 
         print(f"Message: {message}")
         
-        send_telegram_message(message)
+        send_telegram_message(message.replace("#", "\\#"))
         send_discord_message(message)
         send_twitter_message(message)
     
