@@ -204,8 +204,8 @@ def main():
         send_telegram_message(message)
         
         message += "\n#hacktricks #hacking" #This breaks telegram
-        #send_discord_message(message)
-        #send_twitter_message(message)
+        send_discord_message(message)
+        send_twitter_message(message)
     
     else:
         print("No new content added")
