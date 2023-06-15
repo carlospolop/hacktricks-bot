@@ -194,16 +194,17 @@ def main():
 
         # To use a "!", telegram needs it escaped...
         message = "📓 Top 5 modified HackTricks pages in 2 weeks 📓\n\n"
+        message = ""
         
         for url in urls[:5]:
             s_url  = s.tinyurl.short(url)
             message += f"- {s_url}\n"
 
-        message += "\n#hacktricks #hacking"
+        #message += "\n#hacktricks #hacking"
 
         print(f"Message: {message}")
         
-        send_telegram_message(message.replace("#", "\\#"))
+        send_telegram_message(message)
         #send_discord_message(message)
         #send_twitter_message(message)
     
