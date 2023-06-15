@@ -200,7 +200,7 @@ def main():
             s_url  = s.tinyurl.short(url)
             message += f"- {s_url}\n"
 
-        #message += "\n#hacktricks #hacking"
+        message += "\n#hacktricks #hacking"
 
         print(f"Message: {message}")
         
