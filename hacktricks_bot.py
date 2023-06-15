@@ -194,7 +194,6 @@ def main():
 
         # To use a "!", telegram needs it escaped...
         message = "📓 Top 5 modified HackTricks pages in 2 weeks 📓\n\n"
-        message = ""
         
         for url in urls[:5]:
             s_url  = s.tinyurl.short(url)
